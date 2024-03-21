@@ -1,0 +1,104 @@
+<html>
+	<head>       
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>Calcolo Area Curva Metodi per approssimazione</title>
+		
+		<script language="javascript">
+			var dimR,dimT;
+			var sx,dx;
+			
+			function init()
+			{
+				sx=Number(document.getElementById("possx").value);
+				dx=Number(document.getElementById("posdx").value);
+				dimR=Number(document.getElementById("posdimr").value);
+				dimT=Number(document.getElementById("posdimt").value);
+				if(dimT==0||isNaN(dimT))
+					dimT=dimR;
+				if(dx<sx)
+					dx=sx;
+			}
+						
+			function f(x)
+			{
+				return x;	
+			}
+			
+			
+			
+			function evalRettangoliLeft()
+			{
+				var area=0;
+				var base=(dx-sx)/dimR;
+				
+				for(var i=0;i<dimR;i++)
+				{
+					area=area+base*f(sx+i*base);
+				}				
+				
+				return area;
+			}
+			
+			function evalRettangoliMid()
+			{
+				var area=0;
+				var base=(dx-sx)/dimR;
+				for(var i=0;i<dimR;i++)
+				{
+					area=area+base*f(sx+i*base+base/2);
+				}			
+				
+				return area;
+			}
+			
+			
+			function evalTrapezi()
+			{
+				var area=0;
+				var base=(dx-sx)/dimT;
+				for(var i=0;i<dimT;i++)
+				{
+					area=area+base*(f(sx+i*base)+f(sx+(i+1)*base))/2;
+				}
+				return area;
+			}
+		
+			function exec(c)
+			{
+				init();
+				if(c==0)
+				{
+					document.getElementById("posrl").innerHTML=evalRettangoliLeft();
+					document.getElementById("posrm").innerHTML=evalRettangoliMid();
+				}
+				else
+					document.getElementById("post").innerHTML=evalTrapezi();
+			}
+		</script>		
+	</head>
+	<body>		
+		Intervallo: sx<input id="possx" type="text" value="0"/> dx<input id="posdx" type="text" value="1"/>
+		<br/>Numero Rettangoli: <input id="posdimr" type="text"/>	
+		<br/>Numero Trapezi: <input id="posdimt" type="text"/>
+		<br/><button onclick="exec(0);">Calcola Rettangoli</button>		
+		<button onclick="exec(1);">Calcola Trapezi</button>
+		<br/><br/><br/>
+		<table border="1" cellspacing="0" width="70%" height="20%">
+			<tr align="center" height="33%">
+				<td width="50%" colspan="2">Risultato metodo rettangoli</td>
+				<td rowspan="2" valign="top">Risultato metodo trapezi</td>
+			</tr>
+			<tr align="center" height="33%">			
+				<td>Left point</td>
+				<td>Mid Point</td>
+			</tr>
+			<tr align="center">			
+				<td id="posrl"></td>				
+				<td id="posrm"></td>	
+				<td id="post"></td>
+			</tr>
+		</table>
+	</body>
+</html>
+	
+	

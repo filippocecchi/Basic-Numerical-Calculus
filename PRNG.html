@@ -1,0 +1,59 @@
+<html>
+	<head>       
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>Analisi Sequenze</title>
+		
+		<script language="javascript">
+			function init(){v=[],dim=Number(document.getElementById("posdim").value),seme=document.getElementById("possem").value,xn=seme.length>0&&!isNaN(Number(seme))?Number(seme):5,istoExists=!1,viewExists=!1,corre1Exists=!1,autoExists=!1}function autoScaling(a,b){for(var c=v[0],d=v[0],e=0;e<v.length;e++)v[e]<d&&(d=v[e]),v[e]>c&&(c=v[e]);if(d<a||c>b){alert("Sequenza non in ["+a+","+b+"). Autoscaling.");for(var e=0;e<v.length;e++)v[e]=a+(v[e]-d)/(.1+c-d)*b}}function evalFrequency(a){for(;freq.length>0;)freq.pop();for(var b=0;b<a;b++)freq[b]=0;for(var b=0;b<v.length;b++)for(var c=0;c<a;c++)if(v[b]<(1+c)/a){freq[c]++;break}}function drawView(){var c,d,e,f,a=5,b=.7;if(!viewExists){for(autoScaling(0,1),e=.98,d=(wView-2*a)/v.length,d=d>a?a:d,f=d/2<b?b:d/2,c="<canvas id='view' width='"+wView+"' height='"+hView+"' style='border: 1px solid black;'></canvas>",document.getElementById("posview").innerHTML=c,canvas=document.getElementById("view"),ctx=canvas.getContext("2d"),i=0;i<v.length;i++)ctx.beginPath(),ctx.arc(a+i*d,hView*(1-v[i]*e)-a,f,0,2*Math.PI,!0),ctx.fill();viewExists=!0}}function drawIsto(a){var d,e,f,g,h,b=5,c=1e-6;if(!istoExists){for(autoScaling(0,1),evalFrequency(a),h=Math.floor(wIsto/a),h<b&&(h=b,wCanvas=b*a),f=freq[0],e=1;e<a;e++)f<freq[e]&&(f=freq[e]);for(g=(hIsto-50)/f,g<=c&&(g=c,hIsto=c*f),d="<canvas id='isto' width='"+wIsto+"' height='"+hIsto+"' style='border: 1px solid black;'></canvas>",document.getElementById("posisto").innerHTML=d,canvas=document.getElementById("isto"),ctx=canvas.getContext("2d"),grd=ctx.createLinearGradient(0,0,0,hIsto),grd.addColorStop(0,"#8ED6FF"),grd.addColorStop(1,"#004CB3"),ctx.fillStyle=grd,ctx.lineWidth=2,ctx.strokeStyle="white",ctx.clearRect(0,0,wIsto,hIsto),e=0;e<a;e++)ctx.beginPath(),ctx.rect(e*h,hIsto-freq[e]*g,h,g*freq[e]),ctx.fill(),ctx.stroke();ctx.beginPath(),ctx.moveTo(0,hIsto-dim/a*g),ctx.lineTo(wIsto,hIsto-dim/a*g),ctx.strokeStyle="red",ctx.lineWidth=1,ctx.stroke(),istoExists=!0}}function drawCorre1(){var c,d,e,f,a=5,b=.8;if(!corre1Exists){for(autoScaling(0,1),e=.98,d=.98,f=d/2<b?b:d/2,c="<canvas id='corre1' width='"+wView+"' height='"+hView+"' style='border: 1px solid black;'></canvas>",document.getElementById("poscorre1").innerHTML=c,canvas=document.getElementById("corre1"),ctx=canvas.getContext("2d"),i=0;i<v.length-1;i++)ctx.beginPath(),ctx.arc(a+wView*v[i]*d,hView*(1-v[i+1]*e)-a,f,0,2*Math.PI,!0),ctx.fill();corre1Exists=!0}}function evalAutoc(a){for(var b=0,c=0;autoc.length>0;)autoc.pop();for(var d=0;d<v.length;d++)b+=v[d];b/=v.length;for(var d=0;d<v.length;d++)c+=(v[d]-b)*(v[d]-b);if(0!=c){autoc[0]=1;for(var d=1;d<a;d++){autoc[d]=0;for(var e=0;d+e<v.length;e++)autoc[d]=autoc[d]+(v[e]-b)*(v[e+d]-b);autoc[d]=autoc[d]>0?autoc[d]/c:-autoc[d]/c}}}function drawAuto(a){var d,e,f,g,b=6,c=.7;if(!autoExists){for(autoScaling(0,1),evalAutoc(a),f=.98,e=(wView/2-2*b)/a,e=e>b?b:e,g=e/2<c?c:e/2,d="<canvas id='auto' width='"+wView+"' height='"+hView+"' style='border: 1px solid black;'></canvas>",document.getElementById("posauto").innerHTML=d,canvas=document.getElementById("auto"),ctx=canvas.getContext("2d"),i=0;i<a;i++)ctx.beginPath(),ctx.arc(b+i*(2*e),hView*(1-autoc[i]*f)-b,g,0,2*Math.PI,!0),ctx.fill();autoExists=!0}}function scrivi(){document.getElementById("postesto").innerHTML=v}var dim,seme,xn,wIsto=500,hIsto=450,istoExists=!1,wView=500,hView=450,viewExists=!1,corre1Exists=!1,autoExists=!1,v=[],freq=[],autoc=[];
+			
+			//LCG(Linear congruential generator) una famiglia perchè si possono scegliere a b m
+			//xn1=(a*xn+b)%m  m=preferibile grande perche caratterizza le possibilità dei valori, è molto legata al periodo e al numero di elementi che posso generare senno si ripete
+			/*function random() a= ragionevalmente grande per permettere di saltare fuori dall'intervallo del modulo
+			{			
+				xn=(1*xn+1)%10; test correlazione 1: 
+				return xn/10;
+			}*/
+			//Terna di Miller-Goodman a=7^5 b=0 m=(2^31)-1 funziona bene su tutti i tre test. lcg fallisce il test nello spazio ma viene utilizzato perchè molto rapido, operazioni lineari quindi sono poco sicuri.
+			function random()
+			{			
+				xn=(16807*xn)%2147483647;
+				return xn/2147483647;
+			}
+			function genera()
+			{
+				for(var i=0; i<dim; i++)
+					v[i]=random();
+			}
+			
+			function exec()
+			{
+				init();
+				genera();
+			}
+/*1940 fonnoiman primo prng- middle square problema è se ci fossero degli zeri nel mezzo degenera facilmentevedere foto*/
+		</script>		
+	</head>
+	<body>
+		Dimensione: <input id="posdim" type="text"/>
+		<br/>Seme: <input id="possem" type="text"/>
+		<br/><br/>
+		<table>
+			<tr>
+				<td colspan="2"><button onclick="exec();">Genera</button></td>
+			<tr>
+				<td><button onclick="scrivi();">Scrivi</button></td>
+				<td><button onclick="drawView();">Visualizza</button></td>
+				<td><button onclick="drawIsto(10);">Istogramma</button></td>
+				<td><button onclick="drawCorre1();">Correlazione-1</button></td>
+				<td><button onclick="drawAuto(75);" hidden>Autocorrelazione</button></td>
+			</tr>
+		</table>
+		<p id="postesto" align="justify"></p>
+		<p id="posview" align='center'></p>
+		<p id='posisto' align='center'></p>
+		<p id='poscorre1' align='center'></p>
+		<p id='posauto' align='center'></p>
+	
+	
+	</body>
+</html>

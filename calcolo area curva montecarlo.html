@@ -1,0 +1,83 @@
+<html>
+	<head>       
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>Calcolo Area Curva MonteCarlo</title>
+		
+		<script language="javascript">	
+			var dim,seme,xn;
+			var nSamples=10000;	
+			
+			function init()
+			{
+				dim=Number(document.getElementById("posdim").value);
+				seme=document.getElementById("possem").value;
+				if(seme.length>0 && !isNaN(Number(seme)))
+					xn=Number(seme);
+				else
+					xn=5;			
+			}
+						
+			function f(x)
+			{				
+				return Math.abs(Math.sin(Math.exp(10*x)));	
+			}
+			
+			function eval()
+			{
+				var count=0,max,a;
+				var xi,yi;
+				max=f(0);
+				for(var i=0;i<=1;i=i+0.0001)/*se una funzione è lenta passo può essere più grande->passo legato alle derivate delle funzioni quindi alta è la derivata più basso deve essere il passo*/
+				{
+					if(max<f(i))
+					{
+						max=f(i);
+					}
+				}
+				for(i=0;i<dim;i++)
+				{
+					xi=random();
+					yi=max*random();
+					if(f(xi)>yi)
+					{
+						count++;
+					}
+				}
+				a=(count/dim)*max;
+				return a;
+			}
+			
+			
+			
+			function random()
+			{
+			
+				//return Math.random();
+				xn=(16807*xn)%2147483647; 				
+				return xn/2147483647;				
+			}
+			
+			function exec()
+			{
+				var res;
+				init();
+				res=eval();
+				document.getElementById("posr").innerHTML=res;
+			}
+		</script>		
+	</head>
+	<body>		
+		Dimensione: <input id="posdim" type="text"/>
+		<br/>Seme: <input id="possem" type="text"/>
+		<br/><button onclick="exec();">Calcola</button>
+		<table border="1" cellspacing="0" width="40%" height="10%">
+			<tr align="center" height="50%">
+				<td>Risultato Monte Carlo</td>
+			</tr>
+			<tr align="center">			
+				<td id="posr"></td>
+			</tr>
+		</table>
+	</body>
+</html>
+	

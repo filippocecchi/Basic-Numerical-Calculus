@@ -1,0 +1,85 @@
+<html>
+	<head>       
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>Calcolo pigreco MonteCarlo</title>
+		
+		<script language="javascript">	
+			var dim,seme,xn;
+			var wView=400,hView=400,viewExists=false;
+			var x=[],y=[];			
+			
+			function drawBase(){var a,b;a=wView/2,b="<canvas id='view' width='"+wView+"' height='"+hView+"' style='border: 1px solid black;'></canvas>",document.getElementById("posview").innerHTML=b,canvas=document.getElementById("view"),ctx=canvas.getContext("2d"),ctx.beginPath(),ctx.arc(a,a,a,0,2*Math.PI,!0),ctx.stroke()}function drawView(){var d,e,f,a=5,b=.7;if(!viewExists){for(e=.98,d=(wView-2*a)/x.length,d=d>a?a:d,f=d/2<b?b:d/2,canvas=document.getElementById("view"),ctx=canvas.getContext("2d"),i=0;i<x.length;i++)ctx.beginPath(),ctx.arc(x[i],hView-y[i],f,0,2*Math.PI,!0),ctx.fill();viewExists=!0}}
+			
+			function init()
+			{
+				x=[],y=[];
+				dim=Number(document.getElementById("posdim").value);
+				seme=document.getElementById("possem").value;
+				if(seme.length>0 && !isNaN(Number(seme)))
+					xn=Number(seme);
+				else
+					xn=5;			
+			}
+			
+			function eval()
+			{
+				var x0=wView/2,y0=x0, count=0,p,r=wView/2; //(x0,y0) è il centro del cerchio
+				
+				for(var i=0;i<dim;i++)
+				{
+					if(Math.sqrt((x[i]-x0)*(x[i]-x0)+(y[i]-y0)*(y[i]-y0))<=r)
+						count++;
+				}
+				p=4*count/dim;
+				return p;
+			}
+			
+			
+			
+			function random()
+			{
+				xn=(16807*xn)%2147483647;
+				return xn/2147483647;
+			}
+			
+			function genera()
+			{
+				for(var i=0; i<dim; i++)
+				{						
+					x[i]=random()*wView;
+					y[i]=random()*hView;
+				}
+			}
+			
+			function exec()
+			{
+				var res;
+				init();
+				genera();
+				drawView();
+				res=eval();
+				document.getElementById("posr").innerHTML=res;
+				document.getElementById("poso").innerHTML=Math.PI;
+				document.getElementById("pose").innerHTML=(100*Math.abs(res-Math.PI)/Math.PI)+"%";
+			}
+		</script>		
+	</head>
+	<body>
+		Dimensione: <input id="posdim" type="text"/>
+		<br/>Seme: <input id="possem" type="text"/>
+		<br/><button onclick="exec();">Calcola</button>
+		<table border="1" cellspacing="0" width="40%" height="10%">
+			<tr align="center" height="50%">
+				<td>Risultato</td><td>Obiettivo</td><td>Errore</td>
+			</tr>
+			<tr align="center">			
+				<td id="posr"></td><td id="poso"></td><td id="pose"></td>
+			</tr>
+		</table>
+		<p id="posview" align='center'></p>
+		<script>
+			drawBase();
+		</script>
+	</body>
+</html>
+	

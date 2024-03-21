@@ -1,0 +1,66 @@
+<html>
+	<head>       
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>Metodo di bisezione</title>
+		
+		<script language="javascript">
+			var count=0;	
+			function f(x)
+			{
+				return 2*(x^3)-x^4-Math.pow(2.718,-x);
+			}
+			
+			function bisezione(sx,dx,eps)
+			{
+				var cx;
+				count=0;
+				while(dx-sx>eps)
+				{
+					count++;
+					cx=(dx+sx)/2
+					if(f(sx)*f(cx)<0)
+						dx=cx;
+					else
+						if(f(cx)==0)
+							return cx;
+						else
+							sx=cx;
+				}
+				return (dx+sx)/2;
+			}
+		
+			function exec()
+			{
+
+				var eps=0.0000001;			
+				var sx=Number(document.getElementById("possx").value);
+				var dx=Number(document.getElementById("posdx").value);
+				if(dx<sx || f(sx)*f(dx)>=0 || isNaN(f(sx)) || isNaN(f(dx)))
+				{
+					alert("Intervallo non valido per la funzione f");
+					return;
+				}
+				document.getElementById("posr").innerHTML=bisezione(sx,dx,eps);
+				document.getElementById("post").innerHTML=eps;
+				document.getElementById("posd").innerHTML=count;
+			}
+		</script>		
+	</head>
+	<body>		
+		Intervallo: sx<input id="possx" type="text" value="0"/> dx<input id="posdx" type="text" value="1"/>
+		<br/><button onclick="exec();">Trova soluzione</button>
+		<br/><br/><br/>
+		<table border="1" cellspacing="0" width="70%" height="20%">
+			<tr align="center" height="50%">
+				<td width="50%" >Risultato</td>
+				<td>Tolleranza</td>
+				<td>Divisioni</td>
+			</tr>
+			<tr align="center">			
+				<td id="posr"></td>				
+				<td id="post"></td>			
+				<td id="posd"></td>
+			</tr>
+		</table>
+	</body>
+</html>

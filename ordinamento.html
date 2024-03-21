@@ -1,0 +1,232 @@
+<html>
+	<head>       
+			<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+			<title>Ordinamento array</title>
+			
+			
+			<script language="javascript">
+				function init(){dim=Number(document.getElementById("posdim").value),chartExists=!1,mr=[],rIndex=0,wCanvas=600,hCanvas=300,useTab=document.getElementById("postab").checked,tofg=document.getElementById("posfil").checked?1:0,allowRecording=!1,document.getElementById("pospau").hidden=!0}function generaVettore(){var a,b,c;if(v=[],document.getElementById("posrand").checked){for(c=0;c<dim;c++)v[c]=document.getElementById("posrip").checked?Math.floor(Math.random()*dim)+1:c+1;for(c=0;c<dim;c++)a=Math.floor(Math.random()*dim),b=v[a],v[a]=v[c],v[c]=b}else for(c=0;c<dim;c++)v[c]=Number(prompt("Inserisci elemento "+c))}function drawTableChart(a){var b,c;if(!chartExists){var d=v[0];for(b=1;b<dim;b++)d<v[b]&&(d=v[b]);var e="<table id='tabe' width='60%' height='50%' border='0' cellspacing='0' align='center'>";for(b=0;b<=d;b++){for(e+="<tr>",c=0;c<a.length;c++)e+="<td id='"+(d-b)+"_"+c+"'></td>";e+="</tr>"}e+="</table>",document.getElementById("posr").innerHTML=e,chartExists=!0,vcopia=[]}if(0==vcopia.length)for(b=0;b<a.length;b++)document.getElementById(a[b]+"_"+b).bgColor="black",vcopia[b]=a[b];else for(b=0;b<a.length;b++)vcopia[b]!=a[b]&&(document.getElementById(vcopia[b]+"_"+b).bgColor="white",document.getElementById(a[b]+"_"+b).bgColor="black",vcopia[b]=a[b])}function drawCanvasChart(a){var d,e,b=5,c=2,f=v[0];if(!chartExists){for(wid=Math.floor(wCanvas/dim),wid<b&&(wid=b,wCanvas=b*dim),e=1;e<dim;e++)f<v[e]&&(f=v[e]);hei=Math.floor(hCanvas/(f+1)),hei<c&&(hei=c,hCanvas=c*f),d="<p align='center'><canvas id='tela' width='"+wCanvas+"' height='"+hCanvas+"' style='border: 0px solid black;'></canvas></p>",document.getElementById("posr").innerHTML=d,canvas=document.getElementById("tela"),ctx=canvas.getContext("2d"),grd=ctx.createLinearGradient(0,0,0,hCanvas),grd.addColorStop(0,"#8ED6FF"),grd.addColorStop(1,"#004CB3"),ctx.fillStyle=grd,chartExists=!0}for(ctx.clearRect(0,0,wCanvas,hCanvas),e=0;e<dim;e++)ctx.beginPath(),ctx.rect(e*wid,hCanvas-a[e]*hei,wid,hei*(1-tofg)+hei*a[e]*tofg),ctx.fill()}function record(a){var b;if(allowRecording&&mr.length*a.length<1e8)for(mr.push([]),b=0;b<a.length;b++)mr[mr.length-1][b]=a[b]}function drawOneItem(){rIndex<mr.length?useTab?drawTableChart(mr[rIndex]):drawCanvasChart(mr[rIndex]):clearInterval(intervalId),rIndex++}function drawRecords(a){ms=a,intervalId=setInterval(drawOneItem,ms)}function writeRecords(){document.getElementById("posr").innerHTML+="<br/><hr width='50%'/>";for(var a=0;a<mr.length;a++)document.getElementById("posr").innerHTML+="<br/>"+mr[a]}function riprendi(){document.getElementById("pospau").innerHTML="Pausa",document.getElementById("pospau").onclick=pausa,drawRecords(ms)}function pausa(){document.getElementById("pospau").innerHTML="Riprendi",document.getElementById("pospau").onclick=riprendi,clearInterval(intervalId)}var dim,chartExists,intervalId,rIndex,ms=500,allowRecording,useTab,canvas,wCanvas=600,hCanvas=300,ctx,grd,wid,hei,tofg,v=[],vcopia=[],mr=[];
+				
+				/*
+					Variabili Globali da utilizzare:
+						dim - dimensione del vettore
+						v - vettore da ordinare
+					Funzioni disponibili:
+						init() - inizializza le variabili
+						generaVettore() - riempe la variabile v con le caratteristiche richieste dalla pagina web
+						drawTableChart(vet) - genera il grafico del vettore passato come parametro utilizzando il tag table
+						drawCanvasChart(vet) - genera il grafico del vettore passato come parametro utilizzando il tag canvas
+						record(vet) - memorizza il vettore passato come parametro indicizzandolo con il numero di chiamata della funzione
+						drawRecords(ms) - genera l'animazione dei record memorizzati con la funzione record(vet) aggiornando un frame ogni ms millisecondi.
+						writeRecords() - scrive il contenuto dei vettori memorizzati con record 
+				*/
+				
+				function stupidSort()  //offline
+				{
+					var continua=true;
+					var pos,tmp;
+					while(continua)
+					{
+						for(var i=0;i<dim;i++)
+						{
+							pos=Math.floor(Math.random()*dim);
+							tmp=v[i]; 
+							v[i]=v[pos];
+							v[pos]=tmp;
+						}
+						
+						continua=false;
+						for(var i=0;i<dim-1;i++)
+						{
+							if(v[i]>v[i+1])
+								continua=true;
+						}
+						record(v);		
+					}
+				}
+				
+				
+				
+				
+				function selectionSort() //offline
+				{
+					var posMin,tmp;
+					for(var i=0;i<dim;i++)
+					{
+						posMin=i;
+						for(var j=i+1;j<dim;j++)
+						{
+							if(v[j]<v[posMin])
+								posMin=j;
+						}
+						tmp=v[i];
+						v[i]=v[posMin];
+						v[posMin]=tmp;
+						record(v);
+					}				
+				}
+				
+				function bubbleSort() //offline perchè deve comunque rilanciarlo però userà poco tempo per metterne un altro
+				{
+					var tmp, disordinato=true;
+					for(var i=0;i<dim&&disordinato;i++)
+					{
+						disordinato=false;
+						for(var j=dim-1;j>i;j--)
+						{
+							if(v[j]<v[j-1])
+							{
+								disordinato=true;
+								tmp=v[j];
+								v[j]=v[j-1];
+								v[j-1]=tmp;
+							}				
+						}	
+						record(v);			
+					}
+				}
+				
+				function insertionSort()  //online
+				{
+					var j,tmp;
+					for(var i=0;i<dim;i++)
+					{	
+						j=i;
+						tmp=v[i];
+						while(j>0&&tmp<v[j-1])
+						{
+							v[j]=v[j-1];
+							j--;
+						}
+						v[j]=tmp;
+						record(v);
+					}				
+				}
+				//Creatore John fohhnnoiman->Algoritmo mergeSort()
+				/*function mergeSort()
+					1-dividi il vettore a metà
+					2-ordina le due sottometà con mergeSort
+					3-fondere le due metà
+					funzione ricorsiva
+				*/
+				
+				function mergeSort(sx,dx)   		//merge sort viene eseguito log in base 2 di n => O(n*log in base 2 di n)=minino numero di operazioni per algoritmi che si basano sul confronto(dimostrato)
+				{
+					var cx=Math.floor((dx+sx)/2);	//offline
+					if(sx==dx)						//2 dim di memoria=out-of-place
+						return;
+					mergeSort(sx,cx);
+					mergeSort(cx+1,dx);
+					fusione(sx,cx,dx);
+					record(v);
+				}
+				
+				function fusione(sx,cx,dx) //indici di dove dividere il vettore
+				{
+					var vtmp=[];			// non c'è best average worst perchè cmq scrivero n volte O(n)
+					var i=sx,j=cx+1,k=0;		
+					while(i<=cx&&j<=dx)
+					{
+						if(v[i]<v[j])
+						{
+							vtmp[k]=v[i];
+							i++;
+						}
+						else
+						{
+							vtmp[k]=v[j];
+							j++;
+						}
+						k++;
+					}
+					while(i<=cx)
+					{
+						vtmp[k]=v[i];
+						i++;
+						k++;
+					}
+					while(j<=dx)
+					{
+						vtmp[k]=v[j];
+						j++;
+						k++;
+					}
+					for(var i=sx;i<=dx;i++)
+					{
+						v[i]=vtmp[i-sx];		//-sx perchè se quando lancio merge sort su vettore con sx non in pos 0
+					}
+				}
+				function ordina()
+				{					
+					//stupidSort();				
+					//selectionSort();		
+					bubbleSort();
+					//insertionSort();
+					//v.sort(); <-- utilizza versione preinstallata del quick sort se i numeri sono più di venti senno selectionsort
+					//mergeSort(0,dim-1);
+					
+				}
+				//online=aumente di dimensione mentre si esegue senza ripartire offline=devo ripartire da capo
+				// in-place=non ha bisogna di memoria aggiuntiva oltre quella del vettore e out-of-place=ha bisogno vettori di appoggio				
+				//studio asintotico va diviso in tre solo se dipende anche da come è fatto il vettore non solo dalla dimensione
+				function genera()
+				{
+					init();
+					generaVettore();					
+					if(document.getElementById("posgra").checked)
+						if(useTab)
+							drawTableChart(v);
+						else
+							drawCanvasChart(v);
+					else
+						document.getElementById("posr").innerHTML="<br/><br/>v: "+v;				
+				}
+				
+				function exec()
+				{		
+					console.time("tempo");
+					ordina();	
+					console.timeEnd("tempo");
+					
+					if(document.getElementById("posgra").checked)
+						if(useTab)
+							drawTableChart(v);
+						else
+							drawCanvasChart(v);
+					else
+						document.getElementById("posr").innerHTML+=" <br/><hr width='50%'/><br/>v ordinato: "+v;			
+				}
+				
+				function execStepByStep()
+				{
+					allowRecording=true;
+					document.getElementById("pospau").hidden=!document.getElementById("posgra").checked;
+					
+					ordina();
+					
+					if(document.getElementById("posgra").checked)
+						drawRecords(2000);
+					else
+						writeRecords();
+				}
+				
+				
+			</script>		
+	</head>
+	<body style="font-family: verdana, arial; font-size: 14">			
+			Dimensione:<input id="posdim" type="text"/>
+			<br/>
+			Valori casuali:<input id="posrand" type="checkbox"/>(con ripetizioni <input id="posrip" type="checkbox"/>)
+			<br/><br/>
+			Grafico: <input id="posgra" type="checkbox"/> (a tabella<input id="postab" type="checkbox"/>)			
+			<br/>
+			<input id="posfil" type="checkbox"/>Riempimento
+			<br/><br/>
+			<button onclick="genera();">Genera!</button>	
+			<button onclick="exec();">Ordina!</button>	
+			<button onclick="execStepByStep();">Ordina step by step!</button>
+			<button id="pospau" onclick="pausa()" hidden>Pausa</button>
+			<br/>	
+			<p id="posr"></p>
+	</body>
+</html>
